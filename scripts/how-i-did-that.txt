@@ -1,0 +1,26 @@
+
+cd /private/tmp
+pip download GDAL==2.3
+tar xzf GDAL-2.3.0.tar.gz
+cd GDAL-2.3.0
+
+# set environment variables
+CC = gcc-8
+CXX = g++-8
+
+# modify config file: first open it
+# vi setup.cfg
+
+# navigate to the line defining gdal-config
+# $
+# i
+# gdal_config=/usr/local/bin/gdal-config
+# :wq
+
+# now modify setup.py in the following specific ways:
+# name = 'gdal'
+# set os.environ['ARCHFLAGS'] = '' 
+
+# I tried pip install when conda didn't work, and brew when that didn't work
+# I had to create a Frameworks directory for Homebrew manually
+
