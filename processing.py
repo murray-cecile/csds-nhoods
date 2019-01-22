@@ -52,13 +52,16 @@ def main(n = 0, c = "philadelphia"):
 
     print("Now processing {}, job {}.".format(c, n))
 
+    # read in city-level geojson file
     pl = gpd.read_file("places/{}_10km.geojson".format(c)).to_crs(epsg = 4326)
     places = pl.ix[0].geometry
     bounds = places.bounds
 
+    # read in tract file
     tracts = gpd.read_file("tracts/{}.geojson".format(c)).to_crs(epsg = 4326)
     tracts = tracts[["GEOID", "geometry"]].rename(columns = {"GEOID" : "geoid"})
 
+    # read in OSM ways file
     roads = gpd.read_file("ways/{}_way.geojson".format(c))
     roads = gpd.GeoDataFrame(geometry = roads.to_crs(epsg = epsg[c]).buffer(10).to_crs(epsg = 4326))
     roads.index.name = "hway"
@@ -66,34 +69,42 @@ def main(n = 0, c = "philadelphia"):
 
     with open("processed/{}_{:03d}.csv".format(c, n), 'w') as f: pass
 
+    # read through data in chunks of 1M
     iter_csv = pd.read_csv("data/u000.csv", chunksize = 1e6,
                           names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"],
                            dtype = {"advertising_id" : str, "timestamp" : int, "latitude" : float,
                             "longitude" : float, "accuracy" : int})
 
+    # process each chunk of 1M observations
     for dxi, df in enumerate(iter_csv):
 
         print("chunk", dxi, flush = True)
-        print("df has columns", df.columns)
 
+        # drop if the accuracy is too low or if the point is not inside city bounding lat/lon
         df.drop(df[df.accuracy == 0].index, inplace = True)
         df.drop(df[~df.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
 
+        # convert lat/lons to Point projected in local plane
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
                            data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
 
+        # perform spatial join: point in place polygon
         gdf = gpd.GeoDataFrame(data = df, geometry = gs)
         gdf.drop(gdf[~gdf.intersects(places)].index, inplace = True)
         gdf.reset_index(inplace = True, drop = True)
 
+        # perform join on major roadways, so we can drop them.
         gdf["hway"] = 0
         gdf.loc[gpd.sjoin(gdf, roads.copy(), op = "within", how = "inner").index, "hway"] = 1
 
+        # TO DO: DROP THOSE POINTS
 
+        # spatial join: remaining lat/lon to tracts
         gdf = gpd.sjoin(gdf, tracts, op = "within", how = "inner")
 
         gdf.advertising_id = gdf.advertising_id.str.lower()
 
+        # write result to file
         with open("processed/{}_{:03d}.csv".format(c, n), 'a') as f: 
 
           gdf[["advertising_id", "timestamp", "geoid",
@@ -113,7 +124,7 @@ def queue_cities():
   arg_list = []
   for c in cities:
     for n in range(500):
-      arg_list.append({"n" : n, "city" : c})
+      arg_list.append({"n" : n, "c" : c})
 
   p = multiprocessing.Pool(12)
   p.map(run_city_dict, arg_list)
