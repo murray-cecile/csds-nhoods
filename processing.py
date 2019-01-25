@@ -93,11 +93,9 @@ def main(n = 0, c = "philadelphia"):
         gdf.drop(gdf[~gdf.intersects(places)].index, inplace = True)
         gdf.reset_index(inplace = True, drop = True)
 
-        # perform join on major roadways, so we can drop them.
+        # perform join on major roadways, so we can drop them later.
         gdf["hway"] = 0
         gdf.loc[gpd.sjoin(gdf, roads.copy(), op = "within", how = "inner").index, "hway"] = 1
-
-        # TO DO: DROP THOSE POINTS
 
         # spatial join: remaining lat/lon to tracts
         gdf = gpd.sjoin(gdf, tracts, op = "within", how = "inner")
@@ -133,7 +131,7 @@ def queue_cities():
 
 # with open("processing.out", "w") as out: pass
 
-# main(n = 0, city = "philadelphia")
+main(n = 0, city = "philadelphia")
 
 import argparse
 
@@ -144,5 +142,4 @@ if __name__ == '__main__':
   parser.add_argument("-c", "--city", type = str, default = "philadelphia", help="City name")
   args = parser.parse_args()
 
-  # main(n = args.num, c = args.city)
-  queue_cities()
+  main(n = args.num, c = args.city)

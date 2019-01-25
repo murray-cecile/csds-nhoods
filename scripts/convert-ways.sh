@@ -2,6 +2,7 @@
 
 cd /Users/cecilemurray/CSDS/data
 
-wget "https://saxon.harris.uchicago.edu/~jsaxon/way.pbf"
+# wget "https://saxon.harris.uchicago.edu/~jsaxon/way.pbf"
 
-ogr2ogr -f "ESRI Shapefile" lines.shp way.pbf -overwrite -dialect sqlite -sql "SELECT osm_id, name, highway, railway, geometry FROM lines" lines
+ogr2ogr -f "ESRI Shapefile" lines.shp way.pbf -overwrite -dialect sqlite -sql "SELECT osm_id, name, highway, geometry FROM lines" lines
+
