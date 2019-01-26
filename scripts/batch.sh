@@ -8,9 +8,11 @@ cat [0-4]??.csv | awk '{ print > "u_"substr($1,1,1)".csv" }'
 
 # mkdir sorted
 
-bzcat /home/jsaxon/LiveRampReduce/LR_499.csv.bz2 | awk '{print >> "sorted/u_"substr($1,6,3)".csv" }'
+# this one took forever
+# bzcat /home/jsaxon/LiveRampReduce/LR_499.csv.bz2 | awk '{print >> "sorted/u_"substr($1,6,3)".csv" }'
 
+# running this one took about 7 min
 bzcat /home/jsaxon/LiveRampReduce/LR_499.csv.bz2 | awk '{print >> "sorted/u_"substr($1,6,2)".csv" }'
 
 # FINAL COMMAND
-# bzcat /home/jsaxon/LiveRampReduce/0-4]??.csv.bz2 | awk '{print >> "sorted/u_"substr($1,6,3)".csv" }'
+bzcat /home/jsaxon/LiveRampReduce/0-4]??.csv.bz2 | awk '{print >> "sorted2/u_"substr($1,6,2)".csv" }' 
