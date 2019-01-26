@@ -15,4 +15,5 @@ cat [0-4]??.csv | awk '{ print > "u_"substr($1,1,1)".csv" }'
 bzcat /home/jsaxon/LiveRampReduce/LR_499.csv.bz2 | awk '{print >> "sorted/u_"substr($1,6,2)".csv" }'
 
 # FINAL COMMAND
+# ran this in a script called awksort.sh on la2, using nohup
 bzcat /home/jsaxon/LiveRampReduce/0-4]??.csv.bz2 | awk '{print >> "sorted2/u_"substr($1,6,2)".csv" }' 
