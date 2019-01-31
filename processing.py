@@ -112,26 +112,26 @@ def main(n = 0, c = "philadelphia"):
     # return gdf[["advertising_id", "timestamp", "geoid", "latitude", "longitude", "accuracy", "hway", "geometry"]]
 
 
-import multiprocessing
+# import multiprocessing
 
 
-def run_city_dict(d): main(**d)
+# def run_city_dict(d): main(**d)
 
-def queue_cities():
+# def queue_cities():
 
-  arg_list = []
-  for c in cities:
-    for n in range(500):
-      arg_list.append({"n" : n, "c" : c})
+#   arg_list = []
+#   for c in cities:
+#     for n in range(500):
+#       arg_list.append({"n" : n, "c" : c})
 
-  p = multiprocessing.Pool(12)
-  p.map(run_city_dict, arg_list)
+#   p = multiprocessing.Pool(12)
+#   p.map(run_city_dict, arg_list)
 
 
 
 # with open("processing.out", "w") as out: pass
 
-main(n = 0, city = "philadelphia")
+# main(n = 0, city = "philadelphia")
 
 import argparse
 
