@@ -1,0 +1,21 @@
+#!/usr/bin/env python 
+
+import os
+
+universe = vanilla
+
+# Executable and inputs
+executable              = /home/cmmurray/condor-pytest.sh 
+initialdir              = /stash/user/cmmurray/
+
+# Save your work.
+ShouldTransferFiles     = YES
+when_to_transfer_output = ON_EXIT
+
+log    = /stash/user/cmmurray/post.$(Cluster).log
+error  = /stash/user/cmmurray/post.$(Cluster).err
+output = /stash/user/cmmurray/post.$(Cluster).out
+transfer_input_files    = miniconda.sh, parks.tar, condarc
+transfer_output_files   = pytest.csv
+
+queue
