@@ -67,9 +67,6 @@ def main(n = 0):
 
             # drop if outside that state's bounding box
             bounds = st_tracts.bounds
-            # bounds = pd.DataFrame(data = np.array([bounds.minx.min(), bounds.maxx.max(),
-            #                              bounds.miny.min(), bounds.maxy.max()]).reshape(1, 4),
-            #                       columns = ["minx", "maxx", "miny", "maxy"])
             bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
             df.drop(df[~df.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
 
