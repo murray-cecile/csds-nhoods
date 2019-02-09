@@ -46,8 +46,7 @@ def main(n = 0):
                            dtype = {"advertising_id" : str, "timestamp" : int, "latitude" : float,
                             "longitude" : float, "accuracy" : int})
   
-  # df0 =pd.read_csv("data/u000.csv", nrows = 1e4, names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
-
+  
     # process each chunk of 10K observations
     i = 0
     for dxi, df in enumerate(iter_csv):
