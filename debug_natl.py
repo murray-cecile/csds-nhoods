@@ -7,6 +7,7 @@
 import geopandas as gpd
 import pandas    as pd
 import numpy     as np
+import matplotlib as plt
 
 from shapely.geometry import Point
 import fiona.crs # from fiona.crs import from_espg raised an error
@@ -14,10 +15,14 @@ import fiona.crs # from fiona.crs import from_espg raised an error
 import os
 import csv
 import sys
-import pylab
-import pytz
 
-STATES = ["11", "10", "01"]
+# STATES = ["01", "02", "04", "05", "06", "08", "09", "10", "11", "12", "13",
+#  "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
+#   "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
+#   "41", "42", "44", "45", "46", "47", "48", "49", "50", "51", "53", "54", "55", "56"]
+
+
+STATES = ["11", "10", "04"]
 
 def cut_box(row, *bounds):
 
@@ -28,6 +33,29 @@ def cut_box(row, *bounds):
     print(row)
     sys.exit()
 
+def read_roads(state_list = STATES):
+  
+  road_dict = {}
+
+  for st in state_list:
+
+        start = time.time()
+
+        r = gpd.read_file('ways/{}_way.geojson'.format(st))
+        print("file read for state " + st + ": " + str(time.time() - start))
+        read_time = time.time()
+
+        r.index.name = "hway"
+        r.drop(['z_order', 'other_tags'], axis = 1)
+
+        r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)) 
+        buffer_time = time.time()
+        print("buffer for state " + st + ": " + str(buffer_time - read_time))
+        
+        road_dict[st] = r
+
+  return road_dict
+
 if __name__ == "__main__":
     
     # read in tract file
@@ -36,9 +64,11 @@ if __name__ == "__main__":
     tracts["stfips"] = tracts["geoid"].str.slice(0,2)
 
     df = pd.read_csv("data/u000.csv", nrows = 1e5, names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
-    
     df.drop(df[df.accuracy == 0].index, inplace = True)
     print(df.shape)
+
+
+    
 
     for st in STATES:
 
