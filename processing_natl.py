@@ -61,6 +61,10 @@ def main(n = 0):
             # get state level tracts
             st_tracts = tracts[tracts.stfips == st]
 
+            # convert lat/lons to Point projected in local plane
+            gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
+                              data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
+
             # get boundaries for the state 
             state = st_tracts.geometry
 
@@ -68,10 +72,6 @@ def main(n = 0):
             bounds = st_tracts.bounds
             bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
             df.drop(df[~df.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
-
-            # convert lat/lons to Point projected in local plane
-            gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
-                              data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
 
             # perform spatial join: point in state polygon 
             gdf = gpd.GeoDataFrame(data = df, geometry = gs)
