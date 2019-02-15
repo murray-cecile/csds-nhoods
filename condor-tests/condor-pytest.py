@@ -7,7 +7,7 @@ universe = vanilla
 
 # Executable and inputs
 executable              = /home/cmmurray/condor-pytest.sh 
-initialdir              = /stash/user/cmmurray/
+initialdir              = /home/cmmurray
 
 # Save your work.
 ShouldTransferFiles     = YES
@@ -19,12 +19,11 @@ job = """
 log    = /stash/user/cmmurray/post.$(Cluster).log
 error  = /stash/user/cmmurray/post.$(Cluster).err
 output = /stash/user/cmmurray/post.$(Cluster).out
-transfer_input_files    = miniconda.sh, condarc
-transfer_output_files   = pytest.csv
+transfer_input_files    = miniconda.sh, condarc, pytest.py
+transfer_output_files   = check.txt
 queue 
 """
 
 with open("condor-post.submit", "w") as out:
     out.write(header)
-    job.format("pytest")
-~                      
+    out.write(job)

@@ -33,3 +33,5 @@ echo "installing geopandas"
 conda install -y geopandas 
 
 python pytest.py
+
+ls * | tee check.txt
