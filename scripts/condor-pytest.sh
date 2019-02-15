@@ -32,4 +32,4 @@ export PATH="${minidir}/miniconda/bin:$PATH"
 echo "installing geopandas"
 conda install -y geopandas 
 
-python testing.py
+python pytest.py

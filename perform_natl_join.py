@@ -50,6 +50,7 @@ def read_roads(state_list = STATES):
   for st in state_list:
 
         start = time.time()
+        print("start time is: " + start)
 
         r = gpd.read_file('ways/{}_way.geojson'.format(st))
         read_time = track_time('file read for state {}: '.format(st), start)
