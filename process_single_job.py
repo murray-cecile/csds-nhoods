@@ -41,7 +41,7 @@ def read_roads(st):
     r.index.name = "hway"
     r = r.drop(['z_order', 'other_tags'], axis = 1)
 
-    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)) 
+    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 4326).buffer(10)) 
     # print(r.head())
     # print("road projection is " + str(r.crs))
 
@@ -55,7 +55,7 @@ def get_st_tracts(st):
     tracts["stfips"] = tracts["geoid"].str.slice(0,2)
     st_tracts = tracts[tracts["stfips"] == st]
     
-    return st_tracts.to_crs(epsg = 2163) # note: file comes in 4269
+    return st_tracts.to_crs(epsg = 4326) # note: file comes in 4269
 
 
 def main(j, st):
@@ -79,7 +79,7 @@ def main(j, st):
 
         # convert lat/lons to Point 
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
-                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)]).to_crs(epsg = 2163)
+                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)]).to_crs(epsg = 4326)
         gdf = gpd.GeoDataFrame(data = df, geometry = gs)
         print("gdf projection is " + str(gdf.crs))
         print(gdf.head())
@@ -106,6 +106,8 @@ def main(j, st):
         # project state tract file and join remaining points to tracts
         try:
             gdf = gpd.sjoin(gdf, st_tracts, op = "within", how = "inner")
+            gdf.set_index(keys = 'index_right', inplace = True, drop = True)
+            print("gdf.index: ", gdf.index)
 
         except(AttributeError):
             print("no observations in this state?")
@@ -113,12 +115,11 @@ def main(j, st):
 
         # perform join on major roadways, so we can drop them later
         gdf["hway"] = 0
-        print("gdf.shape: ", gdf.shape)
         try:
             gdf.loc[gpd.sjoin(gdf,roads.copy(), op = "within", how = "inner").index, "hway"] = 1
         
         except(AttributeError):
-            print("Perhaps no observations on roads?")
+            print("no observations on roads?")
         
         finally:
 
