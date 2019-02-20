@@ -18,10 +18,12 @@ import csv
 import sys
 import argparse
 
-DATADIR = "data/"
-TRACTDIR = "tracts/"
-WAYSDIR = "ways/"
-PROCESSED = "processed/"
+# working directory is /home/cmmurray/stash
+
+DATADIR = "liveramp/"
+TRACTDIR = "geo/tracts/"
+WAYSDIR = "geo/ways/"
+PROCESSED = "processed/by-st"
 
 def cut_box(row, *bounds):
     ''' checks whether a point falls inside coords of a bounding box '''

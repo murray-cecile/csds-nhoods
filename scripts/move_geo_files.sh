@@ -10,5 +10,4 @@ scp tracts/us_tracts* cmmurray@login.osgconnect.net:~/stash/geo
 scp ways/[0-9]*_way.geojson cmmurray@login.osgconnect.net:~/stash/geo/ways
 
 
-scp batch_natl_condor.py cmmurray@login.osgconnect.net:~/stash
-scp process_single_job.py cmmurray@login.osgconnect.net:~/stash
+scp batch_natl_condor.py process_single_job.py cmmurray@login.osgconnect.net:~/stash

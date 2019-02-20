@@ -1,6 +1,6 @@
 #==================================================================#
 # CONCATENATE STATES
-# Merge state level files for one user set
+# Merge state level files for each 2-digit user ID combo
 #
 # Cecile Murray
 #==================================================================#
