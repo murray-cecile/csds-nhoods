@@ -1,6 +1,6 @@
 cd tracts
 
-wget ftp://ftp2.census.gov/geo/tiger/GENZ2015/shp/cb_2015_*_tract_500k.zip
+# wget ftp://ftp2.census.gov/geo/tiger/GENZ2015/shp/cb_2015_*_tract_500k.zip
 
 for x in *zip; do unzip $x; done
 
@@ -16,12 +16,12 @@ done
 
 rm cb_*
 
-cities="new_york los_angeles chicago houston phoenix philadelphia san_antonio san_diego dallas san_jose austin jacksonville san_francisco columbus fort_worth indianapolis charlotte seattle denver washington"
+# cities="new_york los_angeles chicago houston phoenix philadelphia san_antonio san_diego dallas san_jose austin jacksonville san_francisco columbus fort_worth indianapolis charlotte seattle denver washington"
 
-for city in $cities; do
+# for city in $cities; do
 
-  ogr2ogr -clipsrc ../places/${city}_10km.geojson -f GeoJSON ${city}.geojson us_tracts.shp
+#   ogr2ogr -clipsrc ../places/${city}_10km.geojson -f GeoJSON ${city}.geojson us_tracts.shp
 
-done
+# done
 
 cd -

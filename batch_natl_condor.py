@@ -10,7 +10,7 @@ import os
 header = """
 universe = vanilla
 # Executable and inputs
-executable              = /home/cmmurray/join_natl.sh 
+executable              = /stash/user/cmmurray/scripts/join_natl.sh 
 initialdir              = /stash/user/cmmurray/
 # Save your work.
 ShouldTransferFiles     = YES
@@ -38,19 +38,18 @@ output = "stash/processed/{:02d}/{st}.csv"
 
 for j in range(257):
   
+  #   if j in [58, 403]: continue
+
   with open("condor-natl.{}.submit".format(j), "w") as out:
 
     out.write(header)
 
     for st in STATES:
 
-    #   if j in [58, 403]: stontinue
+      if os.path.isfile(output.format(j, st)): #  and \
+          # os.path.getsize(output.format(st, j)): 
+          # continue
+          print(j, st)
 
-
-    if os.path.isfile(output.format(j, st)): #  and \
-        # os.path.getsize(output.format(st, j)): 
-        continue
-        print(j, st)
-
-        out.write(job.format(j, st, j, st, j, st, j, st, j, st, j, st, j, st, j, st))
+          out.write(job.format(j, st, j, st, j, st, j, st, j, st, j, st, j, st, j, st))
 
