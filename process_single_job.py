@@ -23,7 +23,7 @@ import argparse
 DATADIR = "liveramp/"
 TRACTDIR = "geo/tracts/"
 WAYSDIR = "geo/ways/"
-PROCESSED = "processed/by-st"
+PROCESSED = "processed/"
 
 def cut_box(row, *bounds):
     ''' checks whether a point falls inside coords of a bounding box '''
@@ -62,18 +62,20 @@ def get_st_tracts(st):
 
 def main(j, st):
 
+    print('processing state {} in user id group {:02d}'.format(st, j))
+
     st_tracts = get_st_tracts(st)
-    print("tract projection is ", st_tracts.crs)
+    # print("tract projection is ", st_tracts.crs)
 
     roads = read_roads(st)
 
-    iter_csv = pd.read_csv(DATADIR + 'u{:02d}0.csv'.format(j), chunksize = 1e5, 
+    iter_csv = pd.read_csv(DATADIR + 'u_{:02d}.csv.bz2'.format(j), chunksize = 1e5, 
                            names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
 
     for dxi, df in enumerate(iter_csv):
 
         print("processing chunk #" + str(dxi))
-        print("df dimensions are: ", df.shape)
+        # print("df dimensions are: ", df.shape)
 
         # drop inaccurate observations
         df.drop(df[df.accuracy == 0].index, inplace = True)
@@ -83,7 +85,7 @@ def main(j, st):
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
                     data = [Point(xy) for xy in zip(df.longitude, df.latitude)]).to_crs(epsg = 4326)
         gdf = gpd.GeoDataFrame(data = df, geometry = gs)
-        print("gdf projection is " + str(gdf.crs))
+        # print("gdf projection is " + str(gdf.crs))
         print(gdf.head())
 
 
@@ -100,16 +102,16 @@ def main(j, st):
 
         gdf.advertising_id = gdf.advertising_id.str.lower()
 
-        print(gdf.shape)
-        print(st_tracts.shape)
-        print(st_tracts.head())
+        # print(gdf.shape)
+        # print(st_tracts.shape)
+        # print(st_tracts.head())
 
 
         # project state tract file and join remaining points to tracts
         try:
             gdf = gpd.sjoin(gdf, st_tracts, op = "within", how = "inner")
             gdf.set_index(keys = 'index_right', inplace = True, drop = True)
-            print("gdf.index: ", gdf.index)
+            # print("gdf.index: ", gdf.index)
 
         except(AttributeError):
             print("no observations in this state?")
@@ -125,7 +127,7 @@ def main(j, st):
         
         finally:
 
-            with open(PROCESSED + 'pr_{:02d}_{}.csv'.format(j, st), "a") as f: 
+            with open(PROCESSED + 'u_{:02d}_{}.csv'.format(j, st), "a") as f: 
 
                 gdf[["advertising_id", "timestamp", "geoid",
                 "latitude", "longitude", "accuracy", "hway"]].to_csv(f, index = False, float_format='%.5f', header = False)
