@@ -11,16 +11,16 @@ header = """
 universe = vanilla
 # Executable and inputs
 executable              = /home/cmmurray/stash/test-state.sh 
-initialdir              = /home/cmmurray/stash
+initialdir              = /stash/user/cmmurray
 # Save your work.
 ShouldTransferFiles     = YES
 when_to_transfer_output = ON_EXIT
 """
 
 job = """
-log    = /stash/users/cmmurray/condor/u_{:02d}.{}.$(Cluster).log
-error  = /stash/users/cmmurray/condor/u_{:02d}.{}.$(Cluster).err
-output = /stash/users/cmmurray/condor/u_{:02d}.{}.$(Cluster).out
+log    = /stash/user/cmmurray/condor/u_{:02d}.{}.$(Cluster).log
+error  = /stash/user/cmmurray/condor/u_{:02d}.{}.$(Cluster).err
+output = /stash/user/cmmurray/condor/u_{:02d}.{}.$(Cluster).out
 transfer_input_files    = miniconda.sh, condarc, process_single_job.py, liveramp/u_{:02d}.csv.bz2, geo/tracts/us_tracts.shp, geo/ways/{}_way.geojson
 transfer_output_files   = u_{:02d}_{}.csv
 transfer_output_remaps  = "u_{:02d}_{}.csv = processed/u_{:02d}/{}.csv"
