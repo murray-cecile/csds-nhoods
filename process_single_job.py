@@ -95,8 +95,8 @@ def main(j, st):
 
         # drop observations outside the state
         # print("state tracts are in crs: " + str(state_blob.crs))
-        gdf.drop(df[~gdf.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
-        gdf.reset_index(inplace = True, drop = True)
+        df.drop(df[~df.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
+        df.reset_index(inplace = True, drop = True)
 
         if df.empty:
             continue
