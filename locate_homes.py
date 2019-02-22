@@ -38,7 +38,7 @@ for u in uid_list:
     # need to localize all these timezones
     df['stcofips'] = df['geo'].astype('str').str.slice(0,5)
     df = df.join(timezones.set_index('stcofips'), on = 'stcofips', how = 'left')
-    df['ts'] = apply(df.apply(change_tz, axis = 1))
+    df['ts'] = df.apply(change_tz, axis = 1)
     df["date"] = df.ts.dt.date.astype(str)
 
     home = df.loc[df.ts.dt.hour < 6, ["uid", "geo", "ts"]].copy()

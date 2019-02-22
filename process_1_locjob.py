@@ -20,9 +20,9 @@ import argparse
 
 # working directory is /home/cmmurray/stash
 
-DATADIR = "liveramp/"
-TRACTDIR = "geo/tracts/"
-WAYSDIR = "geo/ways/"
+DATADIR = "data/"
+TRACTDIR = "tracts/"
+WAYSDIR = "ways/"
 PROCESSED = "processed/"
 
 OUT_VARS = ["advertising_id", "timestamp", "geoid", "latitude", "longitude", "accuracy", "hway"]
@@ -75,14 +75,15 @@ def main(j, st):
     print("state blob bounds:" + str(bounds))
     bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
 
+
     roads = read_roads(st)
 
-    iter_csv = pd.read_csv(DATADIR + 'u_{:02d}.csv.bz2'.format(j), chunksize = 1e5, 
-                           names = ["publisher", "advertising_id", "timestamp", "latitude", "longitude", "accuracy", "opt"])
+    iter_csv = pd.read_csv(DATADIR + 'u000-2.csv', chunksize = 1e5, 
+                           names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
 
     for dxi, df in enumerate(iter_csv):
 
-        print("processing chunk #" + str(dxi), flush=True, end = " ")
+        print("processing chunk #" + str(dxi))
         # print("df dimensions are: ", df.shape)
 
         # drop inaccurate observations
@@ -110,16 +111,13 @@ def main(j, st):
 
         print("after applying state bbox: ", gdf.shape)
         # print(st_tracts.shape)
-        # print(st_tracts.head())
+        print(st_tracts.head())
 
         if df.empty:
             continue
 
-        print("df is not empty")
-
         # project state tract file and join remaining points to tracts
         try:
-            print("starting tract spatial join")
             gdf = gpd.sjoin(gdf, st_tracts, op = "within", how = "inner")
             gdf.set_index(keys = 'index_right', inplace = True, drop = True)
             # print("gdf.index: ", gdf.index)
@@ -131,7 +129,6 @@ def main(j, st):
         # perform join on major roadways, so we can drop them later
         gdf["hway"] = 0
         try:
-            print("starting ways spatial join")
             gdf.loc[gpd.sjoin(gdf,roads.copy(), op = "within", how = "inner").index, "hway"] = 1
         
         except(AttributeError):
@@ -141,9 +138,9 @@ def main(j, st):
 
             print("writing to file")
 
+
             gdf[OUT_VARS].to_csv(PROCESSED + 'u_{:02d}_{}.csv.bz2'.format(j, st),
                                 mode = "a", compression = 'bz2', index = False, float_format='%.5f', header = False)
-
 
 if __name__ == "__main__":
     
