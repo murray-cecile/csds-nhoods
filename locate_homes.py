@@ -6,11 +6,20 @@
 #==================================================================#
 
 import pandas as pd 
+import pytz
+from pytz import timezone
+
 
 GEODIR = 'geo/'
 PROCESSED = 'processed/'
 
-## TO DO: TIMEZONES
+# list of timezones by county for all 3,143 counties
+timezones = pd.read_csv('data/countytimezones.csv', dtype = {'stcofips': 'str', 'tz': 'str'})
+
+def change_tz(row):
+    ''' converts timestamp in row to correct timezone '''
+
+    return pd.to_datetime(row.ts, unit = 's').tz_localize('utc').tz_convert(pytz.timezone(row.tz))
 
 
 uid_list = [x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
@@ -23,10 +32,13 @@ for u in uid_list:
     df.sort_values(by = ["uid", "ts"], inplace = True)
     df.drop_duplicates(inplace = True)
     df.drop(df[df.hway == 1].index, inplace = True)
-    df.drop(df[df.acc > 500].index, inplace = True)
+      # move this to concat
+
 
     # need to localize all these timezones
-    df.ts = pd.to_datetime(df.ts, unit = "s").dt.tz_localize('utc').dt.tz_convert(pytz.timezone('US/' + timezone[city]))
+    df['stcofips'] = df['geo'].astype('str').str.slice(0,5)
+    df = df.join(timezones.set_index('stcofips'), on = 'stcofips', how = 'left')
+    df['ts'] = apply(df.apply(change_tz, axis = 1))
     df["date"] = df.ts.dt.date.astype(str)
 
     home = df.loc[df.ts.dt.hour < 6, ["uid", "geo", "ts"]].copy()

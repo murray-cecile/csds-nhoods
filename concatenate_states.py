@@ -1,9 +1,9 @@
-#==================================================================#
+#=========================================================================#
 # CONCATENATE STATES
-# Merge state level files for each 2-digit user ID combo
+# Merge state level files for each 2-digit user ID combo, drop imprecise
 #
 # Cecile Murray
-#==================================================================#
+#=========================================================================#
 
 import pandas as pd 
 import argparse
@@ -18,11 +18,13 @@ STATES = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
 
 def main(j):
 
+
     with open(PROCESSED + 'u_{:02d}.csv'.format(j), "a") as f:
 
         for st in STATES:
 
             df = pd.read_csv(PROCESSED + 'u_{:02d}/' + st + '.csv')
+            df.drop(df[df.acc > 500].index, inplace = True)
             df.to_csv(f, index = False, float_format='%.5f', header = False, compression = 'bz2')
 
 if __name__ == "__main__":

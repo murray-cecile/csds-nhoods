@@ -67,6 +67,12 @@ def main(j, st):
     st_tracts = get_st_tracts(st)
     # print("tract projection is ", st_tracts.crs)
 
+    state_blob = st_tracts.dissolve(by='stfips')
+    # print(state_blob.head())
+    bounds = state_blob.bounds
+    # print("state blob bounds:" + str(bounds))
+
+
     roads = read_roads(st)
 
     iter_csv = pd.read_csv(DATADIR + 'u_{:02d}.csv.bz2'.format(j), chunksize = 1e5, 
@@ -79,7 +85,11 @@ def main(j, st):
 
         # drop inaccurate observations
         df.drop(df[df.accuracy == 0].index, inplace = True)
-        print("df dimensions are: ", df.shape)
+        # print("df dimensions are: ", df.shape)
+
+        # suprising: case of empty df because all observations have low accuracy?
+        if df.empty:
+            continue
 
         # convert lat/lons to Point 
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
@@ -90,15 +100,10 @@ def main(j, st):
 
 
         # drop observations outside the state
-        state_blob = st_tracts.dissolve(by='stfips')
-        # print(state_blob.head())
-        bounds = state_blob.bounds
-        # print("state blob bounds:" + str(bounds))
         # print("state tracts are in crs: " + str(state_blob.crs))
         bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
         gdf.drop(df[~gdf.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
         gdf.reset_index(inplace = True, drop = True)
-
 
         gdf.advertising_id = gdf.advertising_id.str.lower()
 
@@ -106,6 +111,8 @@ def main(j, st):
         # print(st_tracts.shape)
         # print(st_tracts.head())
 
+        if df.empty:
+            continue
 
         # project state tract file and join remaining points to tracts
         try:
@@ -126,6 +133,8 @@ def main(j, st):
             print("no observations on roads?")
         
         finally:
+
+            print("writing to file")
 
             with open(PROCESSED + 'u_{:02d}_{}.csv'.format(j, st), "a") as f: 
 
