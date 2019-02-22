@@ -40,12 +40,12 @@ def cut_box(row, *bounds):
 def read_roads(st):
     ''' Reads in ways file and buffers it, returns projected GeoDataFrame'''
   
-    r = gpd.read_file(WAYSDIR + '{}_way.geojson'.format(st))
+    r = gpd.read_file(WAYSDIR + '{}_way.geojson'.format(st)) #comes in 4326
 
     r.index.name = "hway"
     r = r.drop(['z_order', 'other_tags'], axis = 1)
 
-    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 4326).buffer(10)) 
+    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)).to_crs(epsg = 4326) 
     # print(r.head())
     # print("road projection is " + str(r.crs))
 
@@ -96,7 +96,7 @@ def main(j, st):
 
         # convert lat/lons to Point 
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
-                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)]).to_crs(epsg = 4326)
+                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
         gdf = gpd.GeoDataFrame(data = df, geometry = gs)
         # print("gdf projection is " + str(gdf.crs))
         print(gdf.head())
@@ -137,7 +137,6 @@ def main(j, st):
         finally:
 
             print("writing to file")
-
 
             gdf[OUT_VARS].to_csv(PROCESSED + 'u_{:02d}_{}.csv.bz2'.format(j, st),
                                 mode = "a", compression = 'bz2', index = False, float_format='%.5f', header = False)

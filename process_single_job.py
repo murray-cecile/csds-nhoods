@@ -40,12 +40,12 @@ def cut_box(row, *bounds):
 def read_roads(st):
     ''' Reads in ways file and buffers it, returns projected GeoDataFrame'''
   
-    r = gpd.read_file(WAYSDIR + '{}_way.geojson'.format(st))
+    r = gpd.read_file(WAYSDIR + '{}_way.geojson'.format(st)) #comes in 4326
 
     r.index.name = "hway"
     r = r.drop(['z_order', 'other_tags'], axis = 1)
 
-    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 4326).buffer(10)) 
+    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)).to_crs(epsg = 4326)
     # print(r.head())
     # print("road projection is " + str(r.crs))
 
@@ -93,29 +93,30 @@ def main(j, st):
         if df.empty:
             continue
 
-        # convert lat/lons to Point 
-        gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
-                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)]).to_crs(epsg = 4326)
-        gdf = gpd.GeoDataFrame(data = df, geometry = gs)
-        # print("gdf projection is " + str(gdf.crs))
-        print(gdf.head())
-
-
         # drop observations outside the state
         # print("state tracts are in crs: " + str(state_blob.crs))
         gdf.drop(df[~gdf.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
         gdf.reset_index(inplace = True, drop = True)
 
+        if df.empty:
+            continue
+        print("after applying state bbox: ", gdf.shape)
+
+
+        # convert lat/lons to Point 
+        gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
+                    data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
+        gdf = gpd.GeoDataFrame(data = df, geometry = gs)
+        # print("gdf projection is " + str(gdf.crs))
+        print(gdf.head())
+
         gdf.advertising_id = gdf.advertising_id.str.lower()
 
-        print("after applying state bbox: ", gdf.shape)
         # print(st_tracts.shape)
         # print(st_tracts.head())
 
         if df.empty:
             continue
-
-        print("df is not empty")
 
         # project state tract file and join remaining points to tracts
         try:
