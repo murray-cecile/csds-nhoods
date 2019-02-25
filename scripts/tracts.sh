@@ -16,6 +16,8 @@ done
 
 rm cb_*
 
+ogr2ogr -f GeoJSON us_tracts.geojson us_tracts.shp
+
 # cities="new_york los_angeles chicago houston phoenix philadelphia san_antonio san_diego dallas san_jose austin jacksonville san_francisco columbus fort_worth indianapolis charlotte seattle denver washington"
 
 # for city in $cities; do

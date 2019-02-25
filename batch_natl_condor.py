@@ -38,10 +38,9 @@ STATES = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
 
 for j in range(1,2):
 
-  #   if j in [58, 403]: continue
   for st in STATES:
 
-    with open('condor/condor-natl-{:02d}-{}.submit'.format(j, st), "w") as out:
+    with open('condor/condor-natl-all.submit'.format(j, st), "w") as out:
 
       out.write(header)
 

@@ -54,7 +54,7 @@ def read_roads(st):
 def get_st_tracts(st):
     ''' reads in US tract shapefile and returns state-specific geodataframe'''
 
-    tracts = gpd.read_file(TRACTDIR + "us_tracts.shp")
+    tracts = gpd.read_file(TRACTDIR + "us_tracts.geojson")
     tracts = tracts[["GEOID", "geometry"]].rename(columns = {"GEOID" : "geoid"})
     tracts["stfips"] = tracts["geoid"].str.slice(0,2)
     st_tracts = tracts[tracts["stfips"] == st]
