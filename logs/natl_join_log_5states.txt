@@ -1,0 +1,40 @@
+tract shapefile is read in: 17.61
+data are read in & inaccurate obvs dropped: 0.49
+file read for state 01: 5.15
+buffer for state 01: 7.84
+file read for state 02: 0.91
+buffer for state 02: 1.47
+file read for state 04: 8.02
+buffer for state 04: 17.55
+file read for state 05: 3.69
+buffer for state 05: 6.12
+file read for state 06: 33.0
+buffer for state 06: 68.48
+roads read in and buffered: 152.22
+starting state 01
+road buffer join complete 6.84
+tract polygon join complete 0.76
+
+
+starting state 02
+Traceback (most recent call last):
+  File "perform_natl_join.py", line 110, in <module>
+    gdf.loc[gpd.sjoin(gdf,road_dict[st].copy(), op = "within", how = "inner").index, "hway"] = 1
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/geopandas/tools/sjoin.py", line 73, in sjoin
+    tree_idx = rtree.index.Index(stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 264, in __init__
+    self.handle = self._create_idx_from_stream(stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 728, in _create_idx_from_stream
+    return IndexStreamHandle(self.properties.handle, stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 854, in __init__
+    self._ptr = self._create(*args, **kwargs)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/core.py", line 29, in check_void
+    raise RTreeError(msg)
+rtree.core.RTreeError: Error in "Index_CreateWithStream": IllegalArgumentException: RTree::BulkLoader::bulkLoadUsingSTR: Empty data stream given.
+Exception ignored in: <bound method Handle.__del__ of <rtree.index.IndexStreamHandle object at 0x12547d828>>
+Traceback (most recent call last):
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 875, in __del__
+    self.destroy()
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 863, in destroy
+    if self._ptr is not None:
+AttributeError: 'IndexStreamHandle' object has no attribute '_ptr'

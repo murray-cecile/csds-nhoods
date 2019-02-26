@@ -1,0 +1,52 @@
+tract shapefile is read in: 15.98
+data are read in & inaccurate obvs dropped: 0.4
+file read for state 01: 4.74
+buffer for state 01: 7.65
+file read for state 02: 0.92
+buffer for state 02: 1.46
+file read for state 04: 8.45
+buffer for state 04: 17.97
+file read for state 05: 4.28
+buffer for state 05: 6.44
+file read for state 06: 38.13
+buffer for state 06: 69.56
+file read for state 08: 6.94
+buffer for state 08: 13.22
+file read for state 09: 2.59
+buffer for state 09: 4.68
+file read for state 10: 1.29
+buffer for state 10: 2.14
+file read for state 11: 0.68
+buffer for state 11: 1.38
+file read for state 12: 13.06
+buffer for state 12: 24.49
+file read for state 13: 9.14
+buffer for state 13: 16.08
+roads read in and buffered: 255.29
+starting state 01
+road buffer join complete 8.39
+tract polygon join complete 0.86
+
+
+starting state 02
+Traceback (most recent call last):
+  File "perform_natl_join.py", line 109, in <module>
+    gdf.loc[gpd.sjoin(gdf,road_dict[st].copy(), op = "within", how = "inner").index, "hway"] = 1
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/geopandas/tools/sjoin.py", line 73, in sjoin
+    tree_idx = rtree.index.Index(stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 264, in __init__
+    self.handle = self._create_idx_from_stream(stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 728, in _create_idx_from_stream
+    return IndexStreamHandle(self.properties.handle, stream)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 854, in __init__
+    self._ptr = self._create(*args, **kwargs)
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/core.py", line 29, in check_void
+    raise RTreeError(msg)
+rtree.core.RTreeError: Error in "Index_CreateWithStream": IllegalArgumentException: RTree::BulkLoader::bulkLoadUsingSTR: Empty data stream given.
+Exception ignored in: <bound method Handle.__del__ of <rtree.index.IndexStreamHandle object at 0x111daee48>>
+Traceback (most recent call last):
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 875, in __del__
+    self.destroy()
+  File "/Users/cecilemurray/anaconda3/lib/python3.6/site-packages/rtree/index.py", line 863, in destroy
+    if self._ptr is not None:
+AttributeError: 'IndexStreamHandle' object has no attribute '_ptr'

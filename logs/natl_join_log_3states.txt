@@ -1,0 +1,25 @@
+tract shapefile is read in: 18.94
+data are read in & inaccurate obvs dropped: 0.41
+file read for state 11: 0.9075350761413574
+buffer for state 11: 1.80263090133667
+file read for state 10: 1.6831560134887695
+buffer for state 10: 2.471729278564453
+file read for state 04: 9.14331603050232
+buffer for state 04: 19.184422969818115
+roads read in and buffered: 35.19
+starting state 11
+road buffer join complete 3.23
+tract polygon join complete 0.1
+
+
+starting state 10
+road buffer join complete 1.05
+tract polygon join complete 0.08
+
+
+starting state 04
+road buffer join complete 7.64
+tract polygon join complete 0.38
+
+
+final time total: 67.04
