@@ -45,7 +45,7 @@ def read_roads(st):
     r.index.name = "hway"
     r = r.drop(['z_order', 'other_tags'], axis = 1)
 
-    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)).to_crs(epsg = 4326) 
+    r = gpd.GeoDataFrame(geometry = r.geometry.to_crs(epsg = 2163).buffer(10)).to_crs(epsg = 4326)
     # print(r.head())
     # print("road projection is " + str(r.crs))
 
@@ -54,7 +54,7 @@ def read_roads(st):
 def get_st_tracts(st):
     ''' reads in US tract shapefile and returns state-specific geodataframe'''
 
-    tracts = gpd.read_file(TRACTDIR + "us_tracts.shp")
+    tracts = gpd.read_file(TRACTDIR + "us_tracts.geojson")
     tracts = tracts[["GEOID", "geometry"]].rename(columns = {"GEOID" : "geoid"})
     tracts["stfips"] = tracts["geoid"].str.slice(0,2)
     st_tracts = tracts[tracts["stfips"] == st]
@@ -75,15 +75,14 @@ def main(j, st):
     print("state blob bounds:" + str(bounds))
     bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
 
-
     roads = read_roads(st)
 
-    iter_csv = pd.read_csv(DATADIR + 'u000-2.csv', chunksize = 1e5, 
+    iter_csv = pd.read_csv(DATADIR + 'u000.csv', chunksize = 1e5, 
                            names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
 
     for dxi, df in enumerate(iter_csv):
 
-        print("processing chunk #" + str(dxi))
+        print("processing chunk #" + str(dxi), flush=True, end = " ")
         # print("df dimensions are: ", df.shape)
 
         # drop inaccurate observations
@@ -94,6 +93,18 @@ def main(j, st):
         if df.empty:
             continue
 
+        # drop observations outside the state
+        # print("state tracts are in crs: " + str(state_blob.crs))
+        df.drop(df[~df.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
+        df.reset_index(inplace = True, drop = True)
+
+        if df.empty:
+            continue
+        print("after applying state bbox: ", df.shape)
+
+        # df['advertising_id'] = df.advertising_id.str.lower()
+
+
         # convert lat/lons to Point 
         gs = gpd.GeoSeries(index = df.index, crs = fiona.crs.from_epsg(4326), 
                     data = [Point(xy) for xy in zip(df.longitude, df.latitude)])
@@ -101,23 +112,15 @@ def main(j, st):
         # print("gdf projection is " + str(gdf.crs))
         print(gdf.head())
 
-
-        # drop observations outside the state
-        # print("state tracts are in crs: " + str(state_blob.crs))
-        gdf.drop(df[~gdf.apply(cut_box, args = bounds, axis = 1)].index, inplace = True)
-        gdf.reset_index(inplace = True, drop = True)
-
-        gdf.advertising_id = gdf.advertising_id.str.lower()
-
-        print("after applying state bbox: ", gdf.shape)
         # print(st_tracts.shape)
-        print(st_tracts.head())
+        # print(st_tracts.head())
 
         if df.empty:
             continue
 
         # project state tract file and join remaining points to tracts
         try:
+            print("starting tract spatial join")
             gdf = gpd.sjoin(gdf, st_tracts, op = "within", how = "inner")
             gdf.set_index(keys = 'index_right', inplace = True, drop = True)
             # print("gdf.index: ", gdf.index)
@@ -129,6 +132,7 @@ def main(j, st):
         # perform join on major roadways, so we can drop them later
         gdf["hway"] = 0
         try:
+            print("starting ways spatial join")
             gdf.loc[gpd.sjoin(gdf,roads.copy(), op = "within", how = "inner").index, "hway"] = 1
         
         except(AttributeError):
@@ -140,6 +144,7 @@ def main(j, st):
 
             gdf[OUT_VARS].to_csv(PROCESSED + 'u_{:02d}_{}.csv.bz2'.format(j, st),
                                 mode = "a", compression = 'bz2', index = False, float_format='%.5f', header = False)
+
 
 if __name__ == "__main__":
     
