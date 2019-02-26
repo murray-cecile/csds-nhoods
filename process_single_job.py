@@ -20,10 +20,10 @@ import argparse
 
 # working directory is /home/cmmurray/stash
 
-DATADIR = "liveramp/"
-TRACTDIR = "geo/tracts/"
-WAYSDIR = "geo/ways/"
-PROCESSED = "processed/"
+DATADIR = ""
+TRACTDIR = ""
+WAYSDIR = ""
+PROCESSED = ""
 
 OUT_VARS = ["advertising_id", "timestamp", "geoid", "latitude", "longitude", "accuracy", "hway"]
 
@@ -100,7 +100,7 @@ def main(j, st):
 
         if df.empty:
             continue
-        print("after applying state bbox: ", gdf.shape)
+        print("after applying state bbox: ", df.shape)
 
 
         # convert lat/lons to Point 
