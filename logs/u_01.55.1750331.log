@@ -1,0 +1,79 @@
+000 (1750331.000.000) 02/25 17:10:26 Job submitted from host: <192.170.227.22:9618?addrs=192.170.227.22-9618&noUDP&sock=1149746_b3e4_4>
+...
+001 (1750331.000.000) 02/25 17:12:07 Job executing on host: <72.36.96.170:45775?CCBID=192.170.227.251:9855%3faddrs%3d192.170.227.251-9855#649590&addrs=72.36.96.170-45775&noUDP>
+...
+006 (1750331.000.000) 02/25 17:12:16 Image size of job updated: 1
+	3  -  MemoryUsage of job (MB)
+	2708  -  ResidentSetSize of job (KB)
+...
+006 (1750331.000.000) 02/25 17:17:17 Image size of job updated: 955860
+	458  -  MemoryUsage of job (MB)
+	468688  -  ResidentSetSize of job (KB)
+...
+006 (1750331.000.000) 02/25 17:22:17 Image size of job updated: 955860
+	459  -  MemoryUsage of job (MB)
+	469132  -  ResidentSetSize of job (KB)
+...
+022 (1750331.000.000) 02/25 19:29:49 Job disconnected, attempting to reconnect
+    Socket between submit and execute hosts closed unexpectedly
+    Trying to reconnect to glidein_6715_18561602@mwt2-c041.campuscluster.illinois.edu <72.36.96.170:45775?CCBID=192.170.227.251:9855%3faddrs%3d192.170.227.251-9855#649590&addrs=72.36.96.170-45775&noUDP>
+...
+024 (1750331.000.000) 02/25 19:29:49 Job reconnection failed
+    Job disconnected too long: JobLeaseDuration (2400 seconds) expired
+    Can not reconnect to glidein_6715_18561602@mwt2-c041.campuscluster.illinois.edu, rescheduling job
+...
+007 (1750331.000.000) 02/25 19:31:48 Shadow exception!
+	Error from glidein_4882_136905111@uct2-c482.mwt2.org: Failed to transfer files
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+...
+007 (1750331.000.000) 02/25 19:35:30 Shadow exception!
+	Error from slot1_7@glidein_184198_630917002@sdsc-48.t2.ucsd.edu: Failed to transfer files
+	0  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+...
+022 (1750331.000.000) 02/25 19:35:50 Job disconnected, attempting to reconnect
+    Socket between submit and execute hosts closed unexpectedly
+    Trying to reconnect to slot1_4@htcondor-global-15g-797fcf5585-8szf8 <10.38.0.1:33215?CCBID=192.170.227.1:9618%3faddrs%3d192.170.227.1-9618%26noUDP%26sock%3dcollector#4040180&addrs=10.38.0.1-33215&noUDP&sock=20_4bfb_2>
+...
+024 (1750331.000.000) 02/25 19:35:50 Job reconnection failed
+    Job not found at execution machine
+    Can not reconnect to slot1_4@htcondor-global-15g-797fcf5585-8szf8, rescheduling job
+...
+001 (1750331.000.000) 02/25 19:37:19 Job executing on host: <72.36.96.168:43798?CCBID=192.170.227.251:9737%3faddrs%3d192.170.227.251-9737#654162&addrs=72.36.96.168-43798&noUDP>
+...
+004 (1750331.000.000) 02/26 00:42:49 Job was evicted.
+	(0) Job was not checkpointed.
+		Usr 0 04:29:02, Sys 0 00:01:54  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	3062822400  -  Run Bytes Received By Job
+	Partitionable Resources :      Usage  Request Allocated 
+	   Cpus                 :       0.87        1         1 
+	   Disk (KB)            : 3009640     3250000 665446152 
+	   Memory (MB)          :     464         464      1920 
+...
+001 (1750331.000.000) 02/26 00:44:34 Job executing on host: <72.36.96.221:33191?CCBID=192.170.227.251:9710%3faddrs%3d192.170.227.251-9710#663768&addrs=72.36.96.221-33191&noUDP>
+...
+004 (1750331.000.000) 02/26 04:15:31 Job was evicted.
+	(0) Job was not checkpointed.
+		Usr 0 03:22:31, Sys 0 00:01:00  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+	0  -  Run Bytes Sent By Job
+	3062822400  -  Run Bytes Received By Job
+	Partitionable Resources :      Usage  Request Allocated 
+	   Cpus                 :       1.00        1         1 
+	   Disk (KB)            : 3011840     3250000   4074531 
+	   Memory (MB)          :     464         464       512 
+...
+022 (1750331.000.000) 02/26 04:16:12 Job disconnected, attempting to reconnect
+    Socket between submit and execute hosts closed unexpectedly
+    Trying to reconnect to slot1_4@htcondor-global-15g-797fcf5585-8szf8 <10.38.0.1:33215?CCBID=192.170.227.1:9618%3faddrs%3d192.170.227.1-9618%26noUDP%26sock%3dcollector#4040180&addrs=10.38.0.1-33215&noUDP&sock=20_4bfb_2>
+...
+024 (1750331.000.000) 02/26 04:16:12 Job reconnection failed
+    Job not found at execution machine
+    Can not reconnect to slot1_4@htcondor-global-15g-797fcf5585-8szf8, rescheduling job
+...
+009 (1750331.000.000) 02/26 04:16:17 Job was aborted by the user.
+	Job removed by SYSTEM_PERIODIC_REMOVE due to more than 10 restarts
+...
