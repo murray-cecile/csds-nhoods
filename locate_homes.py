@@ -12,6 +12,8 @@ from pytz import timezone
 
 GEODIR = 'data/'
 PROCESSED = 'processed/'
+INFILE = 'u_00_11.csv.bz2'
+OUTFILE = '00_users.csv'
 
 # list of timezones by county for all 3,143 counties
 timezones = pd.read_csv(GEODIR + 'countytimezones.csv', dtype = {'stcofips': 'str', 'tz': 'str'})
@@ -24,11 +26,12 @@ def change_tz(row):
 
 if __name__ == "__main__":
     
-    uid_list = [x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
+    # uid_list = [x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
+    uid_list = ['000']
 
     for u in uid_list:
 
-        df = pd.read_csv(PROCESSED + 'u000.csv', # nrows = 100000, 
+        df = pd.read_csv(PROCESSED + INFILE, # nrows = 100000, 
                         names = ["uid", "ts", "geo", "lat", "lon", "acc", "hway"])
 
         df.sort_values(by = ["uid", "ts"], inplace = True)
@@ -52,4 +55,4 @@ if __name__ == "__main__":
         users.append(home)
 
         users = pd.concat(users)
-        users.to_csv(PROCESSED + "/{}_users.csv".format(u), index = False)
+        users.to_csv(PROCESSED +  OUTFILE.format(u), index = False)

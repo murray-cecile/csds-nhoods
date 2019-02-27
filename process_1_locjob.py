@@ -17,6 +17,7 @@ import os
 import csv
 import sys
 import argparse
+import time
 
 # working directory is /home/cmmurray/stash
 
@@ -64,6 +65,8 @@ def get_st_tracts(st):
 
 def main(j, st):
 
+    start = time.time()
+
     print('processing state {} in user id group {:02d}'.format(st, j))
 
     st_tracts = get_st_tracts(st)
@@ -77,6 +80,8 @@ def main(j, st):
 
     roads = read_roads(st)
 
+    print(time.time() - start)
+
     iter_csv = pd.read_csv(DATADIR + 'u000.csv', chunksize = 1e5, 
                            names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
 
@@ -84,6 +89,8 @@ def main(j, st):
 
         print("processing chunk #" + str(dxi), flush=True, end = " ")
         # print("df dimensions are: ", df.shape)
+
+        df['row'] = df.index
 
         # drop inaccurate observations
         df.drop(df[df.accuracy == 0].index, inplace = True)
@@ -112,7 +119,7 @@ def main(j, st):
         # print("gdf projection is " + str(gdf.crs))
         print(gdf.head())
 
-        # print(st_tracts.shape)
+        print('st_tracts.shape:', st_tracts.shape)
         # print(st_tracts.head())
 
         if df.empty:
