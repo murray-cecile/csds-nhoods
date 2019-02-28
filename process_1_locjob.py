@@ -82,13 +82,18 @@ def main(j, st):
 
     print(time.time() - start)
 
-    iter_csv = pd.read_csv(DATADIR + 'u000.csv', chunksize = 1e5, 
+    iter_csv = pd.read_csv(DATADIR + 'u000-2.csv', chunksize = 1e5, 
                            names = ["advertising_id", "timestamp", "latitude", "longitude", "accuracy"])
 
     for dxi, df in enumerate(iter_csv):
 
         print("processing chunk #" + str(dxi), flush=True, end = " ")
         # print("df dimensions are: ", df.shape)
+
+        # if dxi < 1:
+        #     continue
+        if dxi == 10:
+            break
 
         df['row'] = df.index
 
