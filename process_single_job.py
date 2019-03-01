@@ -17,6 +17,7 @@ import os
 import csv
 import sys
 import argparse
+import time
 
 # working directory is /home/cmmurray/stash
 
@@ -64,7 +65,8 @@ def get_st_tracts(st):
 
 def main(j, st):
 
-    print('processing state {} in user id group {:02d}'.format(st, j))
+    start = time.time()
+    print('processing state {} in user id group {}'.format(st, j))
 
     st_tracts = get_st_tracts(st)
     # print("tract projection is ", st_tracts.crs)
@@ -76,8 +78,9 @@ def main(j, st):
     bounds = [bounds.minx.min(), bounds.maxx.max(),bounds.miny.min(), bounds.maxy.max()]
 
     roads = read_roads(st)
-
-    iter_csv = pd.read_csv(DATADIR + 'u_{:02d}.csv.bz2'.format(j), chunksize = 1e5, 
+    
+    print(time.time() - start)
+    iter_csv = pd.read_csv(DATADIR + 'u_{}.csv.bz2'.format(j), chunksize = 1e6, 
                            names = ["publisher", "advertising_id", "timestamp", "latitude", "longitude", "accuracy", "opt"])
 
     for dxi, df in enumerate(iter_csv):
@@ -142,15 +145,15 @@ def main(j, st):
 
             print("writing to file")
 
-            gdf[OUT_VARS].to_csv(PROCESSED + 'u_{:02d}_{}.csv.bz2'.format(j, st),
+            gdf[OUT_VARS].to_csv(PROCESSED + 'u_{}_{}.csv.bz2'.format(j, st),
                                 mode = "a", compression = 'bz2', index = False, float_format='%.5f', header = False)
 
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-j", "--num",  type = int, default = 0, help="A number!")
+    parser.add_argument("-j", "--uid",  type = str, default = "01", help="Two-digit user id")
     parser.add_argument("-st", "--state", type = str, default = "11", help="State FIPS code")
     args = parser.parse_args()
 
-    main(j = args.num, st = args.state)
+    main(j = args.uid, st = args.state)
