@@ -45,6 +45,11 @@ for j in uid_list:
 
   for st in STATES:
 
+    # already run, except for two that failed
+    if st == '50' and j not in ['e7', 'c1']:
+      continue
+
+    # already run
     if j == '01' and st in ['11', '18', '27', '55']:
       continue
 
