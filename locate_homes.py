@@ -79,7 +79,7 @@ def main(user_id):
 
     # count the number of visits to each tract
     tracts = df.groupby(['tract']).nunique()
-    tracts = tracts[['tract', 'ts']].rename(columns={'ts':'visits'})
+    tracts = tracts[['ts']].rename(columns={'ts':'visits'}).reset_index()
 
     # write to file
     home.to_csv(PROCESSED +  HOMEFILE, index = False)
@@ -95,6 +95,7 @@ if __name__ == "__main__":
 
     # main(user_id = args.uid)
 
+ 
     df = pd.read_csv(PROCESSED + INFILE, # nrows = 100000, 
                     names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
                     dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int})
@@ -110,7 +111,6 @@ if __name__ == "__main__":
 
     df['stcofips'] = df['tract'].astype('str').str.slice(0,5)
     df = df.join(timezones.set_index('stcofips'), on = 'stcofips', how = 'left')
-    df['hour'] = 0
     df[['ts', 'hour']] = df.apply(change_tz, axis = 1)
     print(df.head())
     # df["date"] = df.ts.dt.date.astype(str)
@@ -135,9 +135,4 @@ if __name__ == "__main__":
 
     # count the number of visits to each tract
     tracts = df.groupby(['tract']).nunique()
-    tracts = tracts[['tract', 'ts']].rename(columns={'ts':'visits'})
-
-    # write to file
-    home.to_csv(PROCESSED +  HOMEFILE, index = False)
-    visits.to_csv(PROCESSED +  VISITSFILE, index = False)
-    tracts.to_csv(PROCESSED + TRACTSFILE, index = False)
+    tracts = tracts[['ts']].rename(columns={'ts':'visits'}).reset_index()

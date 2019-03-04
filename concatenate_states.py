@@ -1,6 +1,6 @@
 #=========================================================================#
 # CONCATENATE STATES
-# Merge state level files for each 2-digit user ID combo, drop imprecise
+# Merge state level files for a 2-digit user ID combo, drop imprecise
 #
 # Cecile Murray
 #=========================================================================#
