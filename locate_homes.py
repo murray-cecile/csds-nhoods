@@ -11,8 +11,8 @@ from pytz import timezone
 import argparse
 
 
-GEODIR = 'data/'
-PROCESSED = 'processed/'
+GEODIR = ''
+PROCESSED = ''
 INFILE = 'u_00.csv.bz2'
 HOMEFILE = '00_homes.csv'
 VISITSFILE = "00_visits.csv"
@@ -30,7 +30,7 @@ def change_tz(row):
 
     return pd.Series([ts, ts.hour])
 
-def main(user_id):
+def main(st):
     ''' 
         - read in each file 
         - sort by user id and timestamp, drop duplicates and observations on roads
@@ -40,7 +40,7 @@ def main(user_id):
         - write files
     '''
     
-    df = pd.read_csv(PROCESSED + INFILE, # nrows = 100000, 
+    df = pd.read_csv(PROCESSED + 'u_{}.csv.bz2'.format(st), # nrows = 100000, 
                     names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
                     dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int})
 
@@ -82,17 +82,17 @@ def main(user_id):
     tracts = tracts[['ts']].rename(columns={'ts':'visits'}).reset_index()
 
     # write to file
-    home.to_csv(PROCESSED +  HOMEFILE, index = False)
-    visits.to_csv(PROCESSED +  VISITSFILE, index = False)
-    tracts.to_csv(PROCESSED + TRACTSFILE, index = False)
+    home.to_csv(PROCESSED +  '{}_homes.csv.bz2'.format(st), index = False, float_format='%.5f', compression = 'bz2')
+    visits.to_csv(PROCESSED +  '{}_visits.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
+    tracts.to_csv(PROCESSED + '{}_tracts.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-j", "--uid",  type = str, default = "01", help="Two-digit user id")
+    parser.add_argument("-st", "--st",  type = str, default = "11", help="state FIPS code")
     args = parser.parse_args()
 
-    main(user_id = args.uid)
+    main(user_id = args.st)
 
  
