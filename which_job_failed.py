@@ -17,5 +17,9 @@ if __name__ == "__main__":
     parser.add_argument("-uid-list", "--uids",  type = list, default = UID_LIST, help="Job number")
     args = parser.parse_args()
 
+    uid = UID_LIST[args.job]
+    if args.uids:
+        uid = args.uids[args.job]
 
-    print('Job #{} had uid {}'.format(args.job, args.uids[args.job]))
+
+    print('Job #{} had uid {}'.format(args.job, uid))

@@ -93,6 +93,6 @@ if __name__ == "__main__":
     parser.add_argument("-st", "--st",  type = str, default = "11", help="state FIPS code")
     args = parser.parse_args()
 
-    main(user_id = args.st)
+    main(st = args.st)
 
  

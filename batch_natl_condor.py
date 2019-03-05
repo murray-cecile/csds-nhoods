@@ -16,6 +16,12 @@ initialdir              = /stash/user/cmmurray
 # Save your work.
 ShouldTransferFiles     = YES
 when_to_transfer_output = ON_EXIT
+
+# Send the job to Held state on failure. 
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
+
+# Periodically retry the jobs every 10 minutes, up to a maximum of 5 retries.
+periodic_release =  (NumJobStarts < 5) && ((CurrentTime - EnteredCurrentStatus) > 600)
 """
 
 job = """
