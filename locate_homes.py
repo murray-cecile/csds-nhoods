@@ -40,7 +40,7 @@ def main(st):
         - write files
     '''
     
-    df = pd.read_csv(PROCESSED + 'u_{}.csv.bz2'.format(st), # nrows = 100000, 
+    df = pd.read_csv(PROCESSED + 'all_{}.csv.bz2'.format(st), # nrows = 100000, 
                     names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
                     dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int})
 

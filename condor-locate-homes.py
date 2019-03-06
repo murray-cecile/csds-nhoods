@@ -39,9 +39,9 @@ def main(st_list = STATES):
 
     for st in st_list:
 
-        # right now
-        if st == '50':
-            continue
+        # # right now
+        # if st == '50':
+        #     continue
 
         with open('condor-process-states.submit', "a") as out:
 
@@ -51,8 +51,8 @@ def main(st_list = STATES):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-st", "--st",  type = list, default = '11', help="List of state fips codes")
+    parser.add_argument("-st", "--st",  help="State fips code", action='append')
     args = parser.parse_args()
 
-    main(st_list = [args.st])    
+    main(st_list = args.st)    
 
