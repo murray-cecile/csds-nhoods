@@ -27,8 +27,46 @@ def change_tz(row):
     '''
 
     ts = pd.to_datetime(row.ts, unit = 's').tz_localize('utc').tz_convert(pytz.timezone(row.tz))
-
     return pd.Series([ts, ts.hour])
+
+def locate_homes(df, st):
+    '''locate modal night time location for users, write to csv, merge into main df '''
+
+    # IDENTIFY HOMES
+    home = df.loc[df.hour < 6, ["uid", "tract", "ts"]].copy()
+    home = home.groupby(["uid", "tract"]).count().reset_index().sort_values(["uid", "ts"], ascending = [True, False])
+    home = home[home.ts > 1].drop_duplicates("uid") # the user must have more than one night-time ping there.
+    home = home[["uid", "tract"]].rename(columns = {"tract" : "home"})
+
+    rv = pd.merge(df, home)
+
+    # count the number of observations and number of home visits for each user
+    home['obvs'] = df.groupby(['uid']).count().reset_index().ts
+    home['visits'] = df[df.tract == df.home].groupby(['uid', 'home']).count().reset_index().ts
+    home.to_csv(PROCESSED +  '{}_homes.csv.bz2'.format(st), index = False, float_format='%.5f', compression = 'bz2')
+
+    return rv
+
+
+def count_visits(df, st):
+    ''' sum up the number of visits by each user to each tract '''
+
+    print("begin counting visits")
+    visits = df.groupby(['uid', 'tract']).count().reset_index()
+    visits = visits[['uid', 'tract', 'ts']].rename(columns={'ts':'visits'})
+    visits.to_csv(PROCESSED +  '{}_visits.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
+    print("done writing visits")
+
+
+def make_visit_matrix(df, st):
+    ''' count the number of visits between each tract pair'''
+
+    print("beginning tract counts")
+    tracts = df.groupby(['tract', 'home']).nunique()
+    tracts = tracts[['ts']].rename(columns={'ts':'visits'}).reset_index()
+    tracts.to_csv(PROCESSED + '{}_tracts.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
+    print("done writing visits")
+
 
 def main(st):
     ''' 
@@ -56,35 +94,16 @@ def main(st):
     df['stcofips'] = df['tract'].astype('str').str.slice(0,5)
     df = df.join(timezones.set_index('stcofips'), on = 'stcofips', how = 'left')
     df[['ts', 'hour']] = df.apply(change_tz, axis = 1)
+    print("got through timezones")
     print(df.head())
     # df["date"] = df.ts.dt.date.astype(str)
     df.drop(columns=['stcofips'])
 
+    # lastly, locate homes, count visits, make tract to tract matrix
+    df = locate_homes(df)
+    count_visits(df, st)
+    make_visit_matrix(df, st)
 
-    # IDENTIFY HOMES
-    home = df.loc[df.hour < 6, ["uid", "tract", "ts"]].copy()
-    home = home.groupby(["uid", "tract"]).count().reset_index().sort_values(["uid", "ts"], ascending = [True, False])
-    home = home[home.ts > 1].drop_duplicates("uid") # the user must have more than one night-time ping there.
-    home = home[["uid", "tract"]].rename(columns = {"tract" : "home"})
-
-    df = pd.merge(df, home)
-
-    # sum up the number of visits by each user to each tract
-    visits = df.groupby(['uid', 'tract']).count().reset_index()
-    visits = visits[['uid', 'tract', 'ts']].rename(columns={'ts':'visits'})
-    
-    # count the number of observations and number of home visits for each user
-    home['obvs'] = df.groupby(['uid']).count().reset_index().ts
-    home['visits'] = df[df.tract == df.home].groupby(['uid', 'home']).count().reset_index().ts
-
-    # count the number of visits to each tract
-    tracts = df.groupby(['tract', 'home']).nunique()
-    tracts = tracts[['ts']].rename(columns={'ts':'visits'}).reset_index()
-
-    # write to file
-    home.to_csv(PROCESSED +  '{}_homes.csv.bz2'.format(st), index = False, float_format='%.5f', compression = 'bz2')
-    visits.to_csv(PROCESSED +  '{}_visits.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
-    tracts.to_csv(PROCESSED + '{}_tracts.csv.bz2'.format(st), index = False,  float_format='%.5f', compression = 'bz2')
 
 
 if __name__ == "__main__":

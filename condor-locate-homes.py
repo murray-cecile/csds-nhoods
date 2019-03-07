@@ -22,7 +22,7 @@ job = """
 log    = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).log
 error  = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).err
 output = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).out
-transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/states/all_{}.csv.bz2
+transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/states/all_{}.csv.bz2, countytimezones.csv
 transfer_output_files   = {}_homes.csv.bz2, {}_visits.csv.bz2, {}_tracts.csv.bz2
 transfer_output_remaps  = "{}_homes.csv.bz2 = processed/states/{}_homes.csv.bz2", "{}_visits.csv.bz2 = processed/states/{}_visits.csv.bz2", "{}_tracts.csv.bz2 = processed/states/{}_tracts.csv.bz2"
 args                    = {}
