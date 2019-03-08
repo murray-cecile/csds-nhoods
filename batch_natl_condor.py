@@ -25,12 +25,12 @@ periodic_release =  (NumJobStarts < 5) && ((CurrentTime - EnteredCurrentStatus) 
 """
 
 job = """
-log    = /stash/user/cmmurray/condor/uid-st/u_{}.{}.$(Cluster).log
-error  = /stash/user/cmmurray/condor/uid-st/u_{}.{}.$(Cluster).err
-output = /stash/user/cmmurray/condor/uid-st/u_{}.{}.$(Cluster).out
-transfer_input_files    = miniconda.sh, condarc, process_single_job.py, liveramp/u_{}.csv.bz2, geo/ways/{}_way.geojson, geo/tracts/us_tracts.geojson
-transfer_output_files   = u_{}_{}.csv.bz2
-transfer_output_remaps  = "u_{}_{}.csv.bz2 = processed/u_{}/{}.csv.bz2"
+log    = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).log
+error  = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).err
+output = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).out
+transfer_input_files    = miniconda.sh, condarc, process_single_job.py, liveramp/{}.csv.bz2, geo/ways/{}_way.geojson, geo/tracts/us_tracts.geojson
+transfer_output_files   = {}_{}.csv.bz2
+transfer_output_remaps  = "{}_{}.csv.bz2 = processed/{}/{}.csv.bz2"
 args                    = {} {}
 queue
 """
@@ -41,15 +41,18 @@ STATES = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
   "41", "42", "44", "45", "46", "47", "48", "49", "50", "51", "53", "54", "55", "56"]
 
 
-UID_LIST = [x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
+UID_LIST = ['u_' + x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
 
-def main(st_list, filename):
+def main(st_list, filename, uid_list):
 
-  for j in UID_LIST:
+  if not uid_list:
+    uid_list = UID_LIST
 
-    if not os.path.exists('processed/u_{}'.format(j)):
-        os.makedirs('processed/u_{}'.format(j))
-        print('processed/u_{}'.format(j))
+  for j in uid_list:
+
+    if not os.path.exists('processed/{}'.format(j)):
+        os.makedirs('processed/{}'.format(j))
+        print('processed/{}'.format(j))
 
     for st in st_list:
 
@@ -71,6 +74,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-st", "--st",  type = str, default = '11', help="State fips code")
     parser.add_argument('-file', "--file", type = str, help='Condor submit filename')
+    parser.add_argument('-j', '--uid', nargs='+')
     args = parser.parse_args()
 
-    main(st_list = [args.st], filename = args.file)    
+    main(st_list = [args.st], filename = args.file, uid_list = args.uid)    
