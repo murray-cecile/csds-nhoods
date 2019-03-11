@@ -10,6 +10,8 @@ import argparse
 
 header = """
 universe = vanilla
+request_memory = 8GB
+Requirements = OSGVO_OS_STRING == "RHEL 7"
 # Executable and inputs
 executable              = /home/cmmurray/stash/test-state.sh 
 initialdir              = /stash/user/cmmurray
@@ -22,13 +24,16 @@ on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 
 # Periodically retry the jobs every 10 minutes, up to a maximum of 5 retries.
 periodic_release =  (NumJobStarts < 5) && ((CurrentTime - EnteredCurrentStatus) > 600)
+
+# requirements per Lincoln
+Requirements = OSGVO_OS_STRING == "RHEL 7"
 """
 
 job = """
 log    = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).log
 error  = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).err
 output = /stash/user/cmmurray/condor/uid-st/{}.{}.$(Cluster).out
-transfer_input_files    = miniconda.sh, condarc, process_single_job.py, liveramp/{}.csv.bz2, geo/ways/{}_way.geojson, geo/tracts/us_tracts.geojson
+transfer_input_files    = miniconda.sh, condarc, process_single_job.py, make_csv_exist.py, liveramp/{}.csv.bz2, geo/ways/{}_way.geojson, geo/tracts/us_tracts.geojson
 transfer_output_files   = {}_{}.csv.bz2
 transfer_output_remaps  = "{}_{}.csv.bz2 = processed/{}/{}.csv.bz2"
 args                    = {} {}
@@ -50,6 +55,7 @@ def main(st_list, filename, uid_list):
 
   for j in uid_list:
 
+    print(j)
     if not os.path.exists('processed/{}'.format(j)):
         os.makedirs('processed/{}'.format(j))
         print('processed/{}'.format(j))
@@ -67,7 +73,7 @@ def main(st_list, filename, uid_list):
       with open(filename, "a") as out:
 
         out.write(header)
-        out.write(job.format(j, st, j, st, j, st, j, st, j, st, j, st, j, st, j, st))
+        out.write(job.format(j, st, j, st, j, st, j, st, j, st, j, st, j, st, j[2:4], st))
 
 if __name__ == "__main__":
     

@@ -38,7 +38,6 @@ conda install -y geopandas
 python --version
 which python
 ls *
-time python process_single_job.py -j $1 -st $2
-ls *
-python make_csv_exist.py -j $1 -st $2
+time python locate_homes_st.py -st $1
+
 ls *
