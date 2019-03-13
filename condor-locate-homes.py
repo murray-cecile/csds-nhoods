@@ -32,8 +32,8 @@ log    = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).log
 error  = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).err
 output = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).out
 transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/states/all_{}.csv.bz2, countytimezones.csv
-transfer_output_files   = {}_homes.csv.bz2, {}_visits.csv.bz2, {}_tracts.csv.bz2
-transfer_output_remaps  = "{}_homes.csv.bz2 = processed/states/{}_homes.csv.bz2 ; {}_visits.csv.bz2 = processed/states/{}_visits.csv.bz2 ; {}_tracts.csv.bz2 = processed/states/{}_tracts.csv.bz2"
+transfer_output_files   = all_{}_visits.csv.bz2
+transfer_output_remaps  = "all_{}_visits.csv.bz2 = processed/states/all_{}_visits.csv.bz2"
 args                    = {}
 queue
 """
@@ -44,7 +44,7 @@ STATES = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
   "41", "42", "44", "45", "46", "47", "48", "49", "50", "51", "53", "54", "55", "56"]
 
 
-def main(st_list = STATES):
+def main(st_list = STATES, outfile):
 
     for st in st_list:
 
@@ -52,7 +52,7 @@ def main(st_list = STATES):
         # if st == '50':
         #     continue
 
-        with open('condor-process-states.submit', "a") as out:
+        with open('outfile', "a") as out:
 
             out.write(header)
             out.write(job.format(st, st, st, st, st, st, st, st, st, st, st, st, st, st))
@@ -61,7 +61,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-st", "--st",  help="State fips code", action='append')
+    parser.add_argument('-f', "--file", help="submission filename")
     args = parser.parse_args()
 
-    main(st_list = args.st)    
+    main(st_list = args.st, outfile = args.file)    
 
