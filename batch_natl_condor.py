@@ -50,15 +50,20 @@ UID_LIST = ['u_' + x + y for x in "0123456789abcdef" for y in "0123456789abcdef"
 
 def main(st_list, filename, uid_list):
 
-  if not uid_list:
+  # print(uid_list == True)
+
+  if not uid_list[0]:
     uid_list = UID_LIST
+  
+  if not st_list:
+    st_list = STATES
 
   for j in uid_list:
 
     print(j)
-    if not os.path.exists('processed/{}'.format(j)):
-        os.makedirs('processed/{}'.format(j))
-        print('processed/{}'.format(j))
+    # if not os.path.exists('processed/{}'.format(j)):
+    #     os.makedirs('processed/{}'.format(j))
+    #     print('processed/{}'.format(j))
 
     for st in st_list:
 
@@ -78,9 +83,10 @@ def main(st_list, filename, uid_list):
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-st", "--st",  type = str, default = '11', help="State fips code")
-    parser.add_argument('-file', "--file", type = str, help='Condor submit filename')
+    parser.add_argument("-st", "--st", nargs='+', help="State fips code")
+    parser.add_argument('-f', "--file",help='Condor submit filename')
     parser.add_argument('-j', '--uid', nargs='+')
     args = parser.parse_args()
 
-    main(st_list = [args.st], filename = args.file, uid_list = args.uid)    
+
+    main(st_list = args.st, filename = args.file, uid_list = args.uid)    
