@@ -33,27 +33,24 @@ def write_user_ids(st):
     ''' write missing user ids to text file'''
 
     missing = []
+    st = st[0]
 
     for u in UID_LIST:
 
         if not os.path.exists('u_{}/{}.csv.bz2'.format(u, st)):
             print('u_{}/{}.csv.bz2'.format(u, st))
-            missing[st].append('u_{}'.format(u))
+            missing.append('u_{}'.format(u))
 
             with open('missing-{}.txt'.format(st), "a") as f:
-                f.write('u_{}'.format(u))
+                f.write('u_{}\n'.format(u))
 
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-rec", "--rec", help="write list of user ids?")
     parser.add_argument("-st", "--st",  nargs='+', help="state fips code")
     args = parser.parse_args()
     
-    if args.rec:
-        write_user_ids(st = args.st)
-    else: 
-        print_missing(st_list = args.st)
-
+    write_user_ids(st = args.st)
+    
 
