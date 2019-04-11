@@ -1,12 +1,13 @@
 #==================================================================#
 # BATCH NATIONAL JOIN JOB SUBMISSION FOR CONDOR
-# creates the condor-post scripts for each of 256*51 jobs
+# creates the condor-post scripts for each of 256 jobs
 #
 # Cecile Murray
 #==================================================================#
 
 import os
 import argparse
+import functools
 
 header = """
 universe = vanilla
@@ -28,41 +29,48 @@ Requirements = OSGVO_OS_STRING == "RHEL 7"
 """
 
 job = """
-log    = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).log
-error  = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).err
-output = /stash/user/cmmurray/condor/process_st_{}.$(Cluster).out
-transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/states/all_{}.csv.bz2, countytimezones.csv
-transfer_output_files   = all_{}_visits.csv.bz2
-transfer_output_remaps  = "all_{}_visits.csv.bz2 = processed/states/all_{}_visits.csv.bz2"
-args                    = {}
+log    = /stash/user/cmmurray/condor/process_u_{}.$(Cluster).log
+error  = /stash/user/cmmurray/condor/process_u_{}.$(Cluster).err
+output = /stash/user/cmmurray/condor/process_u_{}.$(Cluster).out
+transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/u_{}/u_{}{}.csv.bz2, countytimezones.csv
+transfer_output_files   = u_{}{}_visits.csv.bz2
+transfer_output_remaps  = "u_{}{}_visits.csv.bz2 = processed/uids/u_{}{}_visits.csv.bz2"
+args                    = -j {} -st {}
 queue
 """
 
-STATES = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
+UID_LIST = [x + y for x in "0123456789abcdef" for y in "0123456789abcdef"]
+
+STATE_LIST = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
  "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27",
   "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
   "41", "42", "44", "45", "46", "47", "48", "49", "50", "51", "53", "54", "55", "56"]
 
 
-def main(outfile, st_list = STATES):
+def main(outfile, st_list, uid_list, suffix):
 
-    for st in st_list:
+  if not st_list:
+    st_list = STATE_LIST
 
-        # # right now
-        # if st == '50':
-        #     continue
+  if not uid_list:
+    uid_list = UID_LIST
 
-        with open(outfile, "a") as out:
+  st_args = functools.reduce(lambda x, y: x + ' ' + y, st_list)
 
-            out.write(header)
-            out.write(job.format(st, st, st, st, st, st, st, st, st, st, st, st, st, st))
+  for j in uid_list:
 
+    with open(outfile, "a") as out:
+        out.write(header)
+        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, st_args)) #13 spots to fill rn
+ 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-st", "--st",  help="State fips code", action='append')
+    parser.add_argument('-uids', "--uids", help="a list of uids", action='append')
     parser.add_argument('-f', "--file", help="submission filename")
+    parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
+    parser.add_argument("-st", "--st", nargs='+' help="State fips code")
     args = parser.parse_args()
 
-    main(st_list = args.st, outfile = args.file)    
+    main(outfile = args.file, st_list = args.st, j = args.uids, outfile = args.file)    
 

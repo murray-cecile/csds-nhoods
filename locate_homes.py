@@ -41,13 +41,13 @@ def locate_homes(df, j):
     visits = visits[['uid', 'tract', 'ts']].rename(columns={'ts':'visits'})
     visits = visits.join(home[['uid', 'home']].set_index("uid"), on="uid")
     visits['home'] = visits['home'] == visits['tract']
-    visits.to_csv(PROCESSED +  'u_{}_{}_visits.csv.bz2'.format(j, st), index = False,  float_format='%.5f', compression = 'bz2')
+    visits.to_csv(PROCESSED +  'u_{}_visits.csv.bz2'.format(j), index = False,  float_format='%.5f', compression = 'bz2')
     print("done writing visits")
 
     return rv
 
 
-def main(j, st):
+def main(j, suffix):
     ''' 
         - read in each file 
         - sort by user id and timestamp, drop duplicates and observations on roads
@@ -57,7 +57,7 @@ def main(j, st):
         - write files
     '''
     
-    df = pd.read_csv(PROCESSED + 'u_{}_{}.csv.bz2'.format(j, st), # nrows = 100000, 
+    df = pd.read_csv(PROCESSED + 'u_{}{}.csv.bz2'.format(j), # nrows = 100000, 
                     names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
                     dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int})
 
@@ -78,15 +78,15 @@ def main(j, st):
     df.drop(columns=['stcofips'])
 
     # lastly, locate homes, count visits, etc
-    df = locate_homes(df, j, st)
+    df = locate_homes(df, j)
 
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-st", "--st",  type = str, default = "11", help="state FIPS code")
     parser.add_argument("-j", "--job", default = "00", help="two-digit user id" )
+    parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
     args = parser.parse_args()
 
-    main(j = args.job, st = args.st)
+    main(j = args.job, suffix = args.suffix)
