@@ -61,16 +61,16 @@ def main(outfile, st_list, uid_list, suffix):
 
     with open(outfile, "a") as out:
         out.write(header)
-        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, st_args)) #13 spots to fill rn
+        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, j, st_args)) #13 spots to fill rn
  
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-uids', "--uids", help="a list of uids", action='append')
+    parser.add_argument('-uids', "--uids",  nargs='+', help="a list of uids")
     parser.add_argument('-f', "--file", help="submission filename")
     parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
-    parser.add_argument("-st", "--st", nargs='+' help="State fips code")
+    parser.add_argument("-st", "--st", nargs='+', help="State fips code")
     args = parser.parse_args()
 
-    main(outfile = args.file, st_list = args.st, j = args.uids, outfile = args.file)    
+    main(outfile = args.file, st_list = args.st, uid_list = args.uids, suffix = args.suffix)    
 
