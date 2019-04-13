@@ -5,6 +5,7 @@
 # Cecile Murray
 #=========================================================================#
 
+import os
 import pandas as pd 
 import argparse
 
@@ -29,17 +30,22 @@ def main(st_list, uid_list, suffix):
     st_list = STATE_LIST
 
   for j in uid_list:
-    for st in st_list:
 
-      print('u_{}/{}.csv.bz2'.format(j, st))
-      df = pd.read_csv('u_{}/{}.csv.bz2'.format(j, st), 
-                      names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
-                      dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int, 'hway': int})
-      # print(df.head())
-      df.drop(df[df.uid == '0'].index, inplace = True) 
-      df.drop(df[df.acc > 500].index, inplace = True)
-      # print(df.head())
-      df.to_csv('u_{}/u_{}{}.csv.bz2'.format(j, j, suffix), mode = 'a', index = False, float_format='%.5f', header = False, compression = 'bz2')
+    if os.path.exists('u_{}/u_{}{}.csv.bz2'.format(j, j, suffix)):
+      continue
+
+    else:
+      for st in st_list:
+
+        print('u_{}/{}.csv.bz2'.format(j, st))
+        df = pd.read_csv('u_{}/{}.csv.bz2'.format(j, st), 
+                        names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
+                        dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int, 'hway': int})
+        # print(df.head())
+        df.drop(df[df.uid == '0'].index, inplace = True) 
+        df.drop(df[df.acc > 500].index, inplace = True)
+        # print(df.head())
+        df.to_csv('u_{}/u_{}{}.csv.bz2'.format(j, j, suffix), mode = 'a', index = False, float_format='%.5f', header = False, compression = 'bz2')
 
 if __name__ == "__main__":
     
