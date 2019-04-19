@@ -35,7 +35,7 @@ output = /stash/user/cmmurray/condor/process_u_{}.$(Cluster).out
 transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/u_{}/u_{}{}.csv.bz2, countytimezones.csv
 transfer_output_files   = u_{}{}_visits.csv.bz2
 transfer_output_remaps  = "u_{}{}_visits.csv.bz2 = processed/uids/u_{}{}_visits.csv.bz2"
-args                    = -j {} -st {}
+args                    = -j {} -st {} -suff {}
 queue
 """
 
@@ -56,17 +56,18 @@ def main(outfile, st_list, uid_list, suffix):
     uid_list = UID_LIST
 
   st_args = functools.reduce(lambda x, y: x + ' ' + y, st_list)
+  print(st_args)
 
   for j in uid_list:
 
     with open(outfile, "a") as out:
         out.write(header)
-        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, j, st_args)) #13 spots to fill rn
+        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, j, st_args, suffix)) #14 spots to fill rn?
  
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-uids', "--uids",  nargs='+', help="a list of uids")
+    parser.add_argument('-uids', "--uids", nargs='+', help="a list of uids")
     parser.add_argument('-f', "--file", help="submission filename")
     parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
     parser.add_argument("-st", "--st", nargs='+', help="State fips code")

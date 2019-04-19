@@ -25,7 +25,7 @@ def change_tz(row):
     ts = pd.to_datetime(row.ts, unit = 's').tz_localize('utc').tz_convert(pytz.timezone(row.tz))
     return pd.Series([ts, ts.hour])
 
-def locate_homes(df, j):
+def locate_homes(df, j, suffix):
     '''locate modal night time location for users, count visits to each tract write to csv
         return main df with home locations merged in'''
 
@@ -41,7 +41,7 @@ def locate_homes(df, j):
     visits = visits[['uid', 'tract', 'ts']].rename(columns={'ts':'visits'})
     visits = visits.join(home[['uid', 'home']].set_index("uid"), on="uid")
     visits['home'] = visits['home'] == visits['tract']
-    visits.to_csv(PROCESSED +  'u_{}_visits.csv.bz2'.format(j), index = False,  float_format='%.5f', compression = 'bz2')
+    visits.to_csv(PROCESSED +  'u_{}{}_visits.csv.bz2'.format(j, suffix), index = False,  float_format='%.5f', compression = 'bz2')
     print("done writing visits")
 
     return rv
@@ -57,7 +57,7 @@ def main(j, suffix):
         - write files
     '''
     
-    df = pd.read_csv(PROCESSED + 'u_{}{}.csv.bz2'.format(j), # nrows = 100000, 
+    df = pd.read_csv(PROCESSED + 'u_{}{}.csv.bz2'.format(j, suffix), # nrows = 100000, 
                     names = ["uid", "ts", "tract", "lat", "lon", "acc", "hway"],
                     dtype = {'uid': str, 'ts': int, 'tract': str, 'lat': float, 'lon': float, 'acc': int})
 
@@ -78,7 +78,7 @@ def main(j, suffix):
     df.drop(columns=['stcofips'])
 
     # lastly, locate homes, count visits, etc
-    df = locate_homes(df, j)
+    df = locate_homes(df, j, suffix)
 
 
 
@@ -89,4 +89,5 @@ if __name__ == "__main__":
     parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
     args = parser.parse_args()
 
+    print("begin python script")
     main(j = args.job, suffix = args.suffix)
