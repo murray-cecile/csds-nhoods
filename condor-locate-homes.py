@@ -35,7 +35,7 @@ output = /stash/user/cmmurray/condor/process_u_{}.$(Cluster).out
 transfer_input_files    = miniconda.sh, condarc, locate_homes.py, processed/u_{}/u_{}{}.csv.bz2, countytimezones.csv
 transfer_output_files   = u_{}{}_visits.csv.bz2
 transfer_output_remaps  = "u_{}{}_visits.csv.bz2 = processed/uids/u_{}{}_visits.csv.bz2"
-args                    = -j {} -st {} -suff {}
+args                    = {} {}
 queue
 """
 
@@ -62,7 +62,7 @@ def main(outfile, st_list, uid_list, suffix):
 
     with open(outfile, "a") as out:
         out.write(header)
-        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, j, st_args, suffix)) #14 spots to fill rn?
+        out.write(job.format(j, j, j, j, j, suffix, j, suffix, j, suffix, j, suffix, j, suffix)) #14 spots to fill rn?
  
 if __name__ == "__main__":
 

@@ -38,7 +38,7 @@ conda install -y geopandas
 python --version
 which python
 ls *
-time (python locate_homes.py -j $1 -suff $2)
+time python locate_homes.py -j $1 -suff $2
 
 echo "executed script"
 ls *
