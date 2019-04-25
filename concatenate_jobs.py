@@ -51,7 +51,7 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument("-st", "--stlist", nargs='+', default = "11", help="state fips code list")
-    parser.add_argument('-uids', "--uids", help="a list of uids", action='append')
+    parser.add_argument('-uids', "--uids", nargs='+', help="a list of uids")
     parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
     args = parser.parse_args()
     
