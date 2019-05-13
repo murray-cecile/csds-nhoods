@@ -71,3 +71,16 @@ At this stage, I dropped observations where the accuracy value was greater than 
 
 python concatenate_jobs.py -st 17 27 55 -uids 00 -suff _ILMNWI
 
+### Step 3: Creating the visits matrix
+
+Next, I computed users' home locations and visit frequencies to other locations in 256 parallelized jobs. Each user ID file contains all observations of the set of users whose identifiers begin with a specific two-digit hexidecimal, so a user's entire location history is included in a single file. The components for these jobs are as follows:
+
+* locate-homes.sh, a bootstrap script for installing Python and geopandas and executing the Python script that performs the data manipulation
+* miniconda.sh, condarc: for installing Python 3.7.1 and geopandas on the worker node
+* locate_homes.py: the Python script that performs the data manipulation
+* input data files:
+    - timezones
+    - data file
+
+The process for computing home and visit location frequencies is as follows:
+ 
