@@ -83,4 +83,21 @@ Next, I computed users' home locations and visit frequencies to other locations 
     - data file
 
 The process for computing home and visit location frequencies is as follows:
- 
+
+* Read in the full user ID file, sort by user ID and timestamp, and drop duplicate observations
+* Drop observations within the 10 meter major roads buffer
+* Convert timestamps to uniform timezone
+* Assign home tracts:
+    - flag observations that occur between 12AM and 6AM
+    - sum the number of such observations across each user ID, tract tuple
+    - assign the home tract as the tract where the user most frequently appeared during this time window
+    - however, a user must have more than one night-time appearance in a tract 
+* Count visits to tracts: sum the number of observations of each user ID, tract tuple
+
+The output to these jobs is a single .csv file with four fields: a user ID, a tract, an integer indicating the number of visits that user made to that tract, and a boolean indicating whether that tract is their home tract.
+
+### Step 4: Concatenating visit matrices
+
+The result of step 3 is 256 csv files corresponding to each 2-digit user ID, each of which contains a visit matrix for that set of users. I append these files together to produce a final matrix using merge_tristate.py script.
+
+merge_tristate.py takes two optional arguments: a list of user IDs in case it needs to be run on a subset of the two digit user IDs, and a suffix in the filename (as above)
