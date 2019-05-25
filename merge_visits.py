@@ -1,6 +1,6 @@
 #=========================================================================#
 # CONCATENATE TRISTATE VISIT MATRICES
-# Merge all user id visit matrix files for IL, MN, WI
+# Merge all user id visit matrix files
 #
 # Cecile Murray
 #=========================================================================#
@@ -22,14 +22,14 @@ def main(uid_list, suffix):
 
   for j in uid_list:
 
-    if not os.path.getsize('uids/u_{}_ILMNWI_visits.csv.bz2'.format(j)):
+    if not os.path.getsize('uids/u_{}_{}_visits.csv.bz2'.format(j, suffix)):
         continue
 
     else:
 
-        print('uids/u_{}_ILMNWI_visits.csv.bz2'.format(j))
-        df = pd.read_csv('uids/u_{}_ILMNWI_visits.csv.bz2'.format(j)) 
-        df.to_csv('uids/ILMNWI_visits_{}.csv.bz2'.format(suffix), mode = 'a', index = False, float_format='%.5f', header = False, compression = 'bz2')
+        print('uids/u_{}_{}_visits.csv.bz2'.format(j, suffix))
+        df = pd.read_csv('uids/u_{}_{}_visits.csv.bz2'.format(j, suffix)) 
+        df.to_csv('uids/visits_{}.csv.bz2'.format(suffix), mode = 'a', index = False, float_format='%.5f', header = False, compression = 'bz2')
 
 if __name__ == "__main__":
     
