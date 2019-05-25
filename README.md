@@ -1,15 +1,5 @@
 ### README
 
-What do I need to document?
-
-* process of combining ~13,500 files
-    - approach 1: by state
-    - approach 2: by uid
-* round 2 submission:
-    - scripts that get executed: 1 shell script, 1 python script
-    - script that writes condor job submission
-* format of matrix file
-
 ### Step 0: Sort the data by 2-digit user id
 
 Initially, the data came in 500 compressed csv files. I took these csv files and sorted them into 256 compressed csv files, each containing all of the observations with the same two hexadecimals at the beginning of the user ID. This ensured that all observations for a unique user ID would be contained within the same file. 
