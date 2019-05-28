@@ -19,7 +19,7 @@ STATE_LIST = ["01", "04", "05", "06", "08", "02", "09", "10", "11", "12", "13",
 
 
 
-def main(st_list, uid_list, suffix):
+def main(st_list, uid_list, suffix, overwrite):
 
   print(st_list, uid_list)
 
@@ -29,9 +29,12 @@ def main(st_list, uid_list, suffix):
   if not st_list:
     st_list = STATE_LIST
 
+  print(uid_list)
+  print(st_list)
+
   for j in uid_list:
 
-    if os.path.exists('u_{}/u_{}{}.csv.bz2'.format(j, j, suffix)):
+    if not overwrite and os.path.exists('u_{}/u_{}{}.csv.bz2'.format(j, j, suffix)):
       continue
 
     else:
@@ -53,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("-st", "--stlist", nargs='+', help="state fips code list")
     parser.add_argument('-uids', "--uids", nargs='+', help="a list of uids")
     parser.add_argument('-suff', '--suffix', default = '', help = 'characters to append to file name')
+    parser.add_argument('-overwrite', '--overwrite', default = False, help = "overwrite existing files?")
     args = parser.parse_args()
     
-    main(st_list = args.stlist, uid_list=args.uids, suffix = args.suffix)
+    main(st_list = args.stlist, uid_list=args.uids, suffix = args.suffix, overwrite = args.overwrite)
