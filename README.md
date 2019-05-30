@@ -53,7 +53,7 @@ Not all of these jobs ran successfully the first time, so I wrote a couple of sc
 
 The next step is to combine the state-level user ID files. I created two ways to do this: by state, and by user ID. In the first case, all 256 csv files corresponding to a particular state are concatenated; in the second, all 51 states for a given user ID are concatenated. I ran this process locally on the main node, using nohup.
 
-At this stage, I dropped observations where the accuracy value was greater than 500 (indicating that the location estimate was precise to a radius larger than 500 meters).
+At this stage, I dropped observations where the accuracy value was greater than 500 (indicating that the location estimate was precise to a radius larger than 500 meters). I also drop observations where the user ID is just a single '0' character.
 
 * concatenate_states.py: wraps user IDs up by state. It takes a user ID and an optional two-digit state FIPS as an argument and loops through all of the files, appending them into one large file. If no two-digit state FIPS is provided, it will loop through all 51 by default, but these files are usually too big to use.
 
