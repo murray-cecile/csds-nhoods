@@ -61,19 +61,12 @@ def main(st_list, filename, uid_list):
   for j in uid_list:
 
     print(j)
-    # if not os.path.exists('processed/{}'.format(j)):
-    #     os.makedirs('processed/{}'.format(j))
-    #     print('processed/{}'.format(j))
+    if not os.path.exists('processed/{}'.format(j)):
+        os.makedirs('processed/{}'.format(j))
+        print('processed/{}'.format(j))
 
-    for st in st_list:
-
-      # already run
-      if st == '50':
-        continue
-
-      # already run
-      if j == '01' and st in ['11', '18', '27', '55']:
-        continue
+    if os.path.exists('processed/{}/{}.csv.bz2'.format(j, st)):
+      print("u_{} {} already exists".format(j, st))
 
       with open(filename, "a") as out:
 
